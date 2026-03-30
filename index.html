@@ -137,7 +137,7 @@
                 
                 <!-- Mô hình học (Tab Navigation) -->
                 <div class="form-group mb-8">
-                    <label class="block text-sm font-semibold text-slate-700 mb-3">Bạn đang theo học mô hình nào? <span class="text-red-500">*</span></label>
+                    <label class="block text-sm font-semibold text-slate-700 mb-3">Mô hình học <span class="text-red-500">*</span></label>
                     <div class="flex p-1 bg-slate-100 rounded-full relative" id="classTabs">
                         <input type="hidden" name="classType" id="classTypeInput" value="Lớp Miễn Phí">
                         
@@ -154,7 +154,7 @@
                 <div class="space-y-6">
                     <!-- Tên Học Sinh -->
                     <div class="form-group">
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Họ và tên học sinh <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Họ và tên <span class="text-red-500">*</span></label>
                         <!-- Wrapper có class 'group' để bắt sự kiện focus -->
                         <div class="relative group">
                             <!-- Icon: Phồng to, đổi màu, có bóng khi focus -->
@@ -167,7 +167,7 @@
 
                     <!-- Trường (Kiểu tích chọn) -->
                     <div class="form-group">
-                        <label class="block text-sm font-semibold text-slate-700 mb-3">Trường đang theo học <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Trường học <span class="text-red-500">*</span></label>
                         
                         <div class="flex flex-wrap gap-2.5">
                             <!-- Các tùy chọn trường -->
@@ -261,7 +261,7 @@
                     <!-- Cơ sở đang học (dựa theo hình ảnh cung cấp) -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Cơ sở đang học <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Cơ sở <span class="text-red-500">*</span></label>
                             <div class="relative group">
                                 <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
                                 <select id="campus" required class="w-full pl-12 pr-10 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none appearance-none font-medium cursor-pointer">
@@ -281,7 +281,7 @@
 
                         <!-- Giáo viên đang học -->
                         <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Giáo viên đang học <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Giáo viên <span class="text-red-500">*</span></label>
                             <div class="relative group">
                                 <i class="fa-solid fa-chalkboard-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
                                 <input type="text" id="teacher" required placeholder="ví dụ: Thành Đạt" class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none placeholder:text-slate-400 font-medium">
@@ -307,7 +307,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Môn đang học <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Môn học <span class="text-red-500">*</span></label>
                             <div class="relative group">
                                 <i class="fa-solid fa-book absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
                                 <select id="subject" required class="w-full pl-12 pr-10 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none appearance-none font-medium cursor-pointer">
@@ -325,7 +325,7 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- SĐT Học Sinh -->
                         <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Số điện thoại HS <span class="text-red-500">*</span></label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">SĐT Học sinh <span class="text-red-500">*</span></label>
                             <div class="relative group">
                                 <i class="fa-solid fa-mobile-screen absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
                                 <input type="tel" id="studentPhone" required placeholder="09xx xxx xxx" pattern="[0-9]{10,11}"
@@ -335,7 +335,7 @@
 
                         <!-- SĐT Phụ huynh -->
                         <div class="form-group">
-                            <label class="block text-sm font-semibold text-slate-700 mb-2">Số điện thoại Phụ huynh <span class="text-amber-500">*</span></label>
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">SĐT Phụ huynh <span class="text-amber-500">*</span></label>
                             <div class="relative group">
                                 <i class="fa-solid fa-phone-volume absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-amber-500 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
                                 <input type="tel" id="parentPhone" required placeholder="09xx xxx xxx" pattern="[0-9]{10,11}"
@@ -346,7 +346,7 @@
 
                     <!-- Link FB -->
                     <div class="form-group">
-                        <label class="block text-sm font-semibold text-slate-700 mb-2">Link Facebook <span class="text-slate-400 font-normal">(Không bắt buộc)</span></label>
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Link Facebook <span class="text-slate-400 font-normal">(Tuỳ chọn)</span></label>
                         <div class="relative group">
                             <i class="fa-brands fa-facebook absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-[#1877F2] group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
                             <input type="url" id="fbLink" placeholder="https://facebook.com/..." 
