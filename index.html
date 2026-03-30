@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Đăng Ký Học Tập</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tailwind Config for Custom Colors/Fonts -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb', // Royal Blue
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'float': '0 20px 40px -5px rgba(37,99,235,0.2)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* CSS Tuỳ chỉnh */
+        body {
+            /* Màu nền Xám xanh cực nhạt kết hợp radial-gradient (chấm bi) */
+            background-color: #f0f4f8;
+            background-image: radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 24px 24px;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 1);
+        }
+
+        /* Ẩn thanh cuộn nhưng vẫn cuộn được cho danh sách trường */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Tuỳ chỉnh hiệu ứng cho Custom Radio (Kiểu tích chọn trường & môn học) */
+        .school-radio:checked + div,
+        /* Tuỳ chỉnh hiệu ứng cho Custom Radio (Kiểu tích chọn trường) */
+        .school-radio:checked + div {
+            background-color: #eff6ff; /* brand-50 */
+            border-color: #3b82f6; /* brand-500 */
+            color: #1d4ed8; /* brand-700 */
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .school-radio:checked + div i {
+            display: inline-block;
+            transform: scale(1.1);
+        }
+
+        /* Overlay Thông báo thành công */
+        #successModal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease-in-out;
+        }
+        #successModal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        #successModal .modal-content {
+            transform: scale(0.9) translateY(20px);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #successModal.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+    </style>
+</head>
+<body class="text-slate-800 antialiased p-4 md:p-8 flex items-center justify-center">
+
+    <!-- Main Container -->
+    <main class="w-full max-w-2xl mx-auto">
+        
+        <!-- Main Card (Glassmorphism) -->
+        <div class="glass-card rounded-3xl shadow-soft overflow-hidden relative">
+            
+            <!-- Header Banner -->
+            <div class="bg-gradient-to-r from-brand-600 to-indigo-600 p-8 sm:p-10 text-white relative overflow-hidden">
+                <!-- Họa tiết chìm mờ ảo -->
+                <div class="absolute top-0 right-0 -mt-10 -mr-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl"></div>
+                <div class="absolute bottom-0 left-0 -mb-10 -ml-10 w-32 h-32 bg-sky-300 opacity-20 rounded-full blur-xl"></div>
+                
+                <div class="relative z-10 text-center">
+                    <div class="inline-flex items-center justify-center w-14 h-14 bg-white/20 backdrop-blur-sm rounded-2xl mb-4 shadow-inner border border-white/30">
+                        <i class="fa-solid fa-user-graduate text-2xl text-white"></i>
+                    </div>
+                    <h1 class="text-3xl sm:text-4xl font-bold tracking-tight mb-2 text-white drop-shadow-sm">Đăng Ký Ghi Danh 2026</h1>
+                    <p class="text-blue-100 text-sm sm:text-base font-medium">Hoàn thiện thông tin để bắt đầu hành trình của bạn</p>
+                </div>
+            </div>
+
+            <!-- Form Content -->
+            <form id="registrationForm" class="p-6 sm:p-10">
+                
+                <!-- Mô hình học (Tab Navigation) -->
+                <div class="form-group mb-8">
+                    <label class="block text-sm font-semibold text-slate-700 mb-3">Bạn đang theo học mô hình nào? <span class="text-red-500">*</span></label>
+                    <div class="flex p-1 bg-slate-100 rounded-full relative" id="classTabs">
+                        <input type="hidden" name="classType" id="classTypeInput" value="Lớp Miễn Phí">
+                        
+                        <button type="button" onclick="switchTab('Lớp Miễn Phí', this)" class="tab-btn flex-1 py-3 px-4 rounded-full text-sm font-bold bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-md transition-all duration-300 relative z-10">
+                            <i class="fa-solid fa-gift mr-2"></i> Lớp Miễn Phí
+                        </button>
+                        
+                        <button type="button" onclick="switchTab('Lớp Chất Lượng Cao', this)" class="tab-btn flex-1 py-3 px-4 rounded-full text-sm font-semibold text-slate-500 hover:text-slate-700 transition-all duration-300 relative z-10">
+                            <i class="fa-solid fa-gem mr-2"></i> Lớp Chất Lượng Cao
+                        </button>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <!-- Tên Học Sinh -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Họ và tên học sinh <span class="text-red-500">*</span></label>
+                        <!-- Wrapper có class 'group' để bắt sự kiện focus -->
+                        <div class="relative group">
+                            <!-- Icon: Phồng to, đổi màu, có bóng khi focus -->
+                            <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                            
+                            <input type="text" id="studentName" required placeholder="Nhập họ và tên..." 
+                                class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none placeholder:text-slate-400 font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Trường (Kiểu tích chọn) -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold text-slate-700 mb-3">Trường đang theo học <span class="text-red-500">*</span></label>
+                        
+                        <div class="flex flex-wrap gap-2.5">
+                            <!-- Các tùy chọn trường -->
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Dĩ An" class="school-radio hidden" required>
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Dĩ An
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Bình An" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Bình An
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Đông Chiêu" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Đông Chiêu
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Võ Trường Toản" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Võ Trường Toản
+                                </div>
+                            </label>
+                            
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Tân Đông Hiệp" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Tân Đông Hiệp
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Tân Đông Hiệp B" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Tân Đông Hiệp B
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Đông Hòa" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Đông Hòa
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Tân Bình" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Tân Bình
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Bình Thắng" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Bình Thắng
+                                </div>
+                            </label>
+
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200">
+                                <input type="radio" name="school" value="Nguyễn Viết Xuân" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2">
+                                    <i class="fa-solid fa-check hidden text-brand-600 text-xs transition-transform duration-300"></i> Nguyễn Viết Xuân
+                                </div>
+                            </label>
+
+                            <!-- Nút Chọn Khác -->
+                            <label class="cursor-pointer transition-transform hover:scale-105 duration-200" onclick="toggleOtherSchool(true)">
+                                <input type="radio" name="school" value="Khác" id="schoolOtherRadio" class="school-radio hidden">
+                                <div class="px-4 py-2 rounded-lg border border-slate-200 bg-slate-50 text-sm font-medium text-slate-600 transition-all duration-300 flex items-center gap-2 border-dashed">
+                                    <i class="fa-solid fa-pen text-slate-400 text-xs transition-transform duration-300"></i> Khác...
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Ô nhập tên trường khác (ẩn mặc định) -->
+                        <div id="otherSchoolInputWrapper" class="relative group mt-3 hidden animate-fade-in">
+                            <i class="fa-solid fa-school absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                            <input type="text" id="otherSchoolName" placeholder="Vui lòng nhập tên trường..." 
+                                class="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none font-medium">
+                        </div>
+                    </div>
+
+                    <!-- Cơ sở đang học (dựa theo hình ảnh cung cấp) -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Cơ sở đang học <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-building absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                                <select id="campus" required class="w-full pl-12 pr-10 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none appearance-none font-medium cursor-pointer">
+                                    <option value="" disabled selected>Chọn cơ sở...</option>
+                                    <option value="Cơ Sở Biệt Thự">Cơ Sở Biệt Thự</option>
+                                    <option value="Cơ Sở Nguyễn Văn Siêu">Cơ Sở Nguyễn Văn Siêu</option>
+                                    <option value="Cơ Sở Miễn Phí">Cơ Sở Miễn Phí</option>
+                                    <option value="Cơ Sở Tân Đông Hiệp B">Cơ Sở Tân Đông Hiệp B</option>
+                                    <option value="Cơ Sở Bình An">Cơ Sở Bình An</option>
+                                    <option value="Cơ Sở Đông Hòa">Cơ Sở Đông Hòa</option>
+                                    <option value="Cơ Sở Võ Trường Toản">Cơ Sở Võ Trường Toản</option>
+                                    <option value="Cơ Sở Thủ Đức">Cơ Sở Thủ Đức</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform group-focus-within:rotate-180 duration-300"></i>
+                            </div>
+                        </div>
+
+                        <!-- Giáo viên đang học -->
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Giáo viên đang học <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-chalkboard-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                                <input type="text" id="teacher" required placeholder="ví dụ: Thành Đạt" class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none placeholder:text-slate-400 font-medium">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Khối và Môn -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Khối <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-layer-group absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                                <select id="grade" required class="w-full pl-12 pr-10 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none appearance-none font-medium cursor-pointer">
+                                    <option value="" disabled selected>Chọn khối học...</option>
+                                    <option value="6">Khối 6</option>
+                                    <option value="7">Khối 7</option>
+                                    <option value="8">Khối 8</option>
+                                    <option value="9">Khối 9</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform group-focus-within:rotate-180 duration-300"></i>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Môn đang học <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-book absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                                <select id="subject" required class="w-full pl-12 pr-10 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none appearance-none font-medium cursor-pointer">
+                                    <option value="" disabled selected>Chọn môn học...</option>
+                                    <option value="Toán">Toán</option>
+                                    <option value="Văn">Văn</option>
+                                    <option value="Tiếng Anh">Tiếng Anh</option>
+                                    <option value="KHTN">KHTN</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none transition-transform group-focus-within:rotate-180 duration-300"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- SĐT Học Sinh -->
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Số điện thoại HS <span class="text-red-500">*</span></label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-mobile-screen absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-brand-600 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                                <input type="tel" id="studentPhone" required placeholder="09xx xxx xxx" pattern="[0-9]{10,11}"
+                                    class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-brand-500/10 focus:border-brand-500 transition-all duration-300 outline-none placeholder:text-slate-400 font-medium">
+                            </div>
+                        </div>
+
+                        <!-- SĐT Phụ huynh -->
+                        <div class="form-group">
+                            <label class="block text-sm font-semibold text-slate-700 mb-2">Số điện thoại Phụ huynh <span class="text-amber-500">*</span></label>
+                            <div class="relative group">
+                                <i class="fa-solid fa-phone-volume absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-amber-500 group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                                <input type="tel" id="parentPhone" required placeholder="09xx xxx xxx" pattern="[0-9]{10,11}"
+                                    class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-amber-500/10 focus:border-amber-500 transition-all duration-300 outline-none placeholder:text-slate-400 font-medium">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Link FB -->
+                    <div class="form-group">
+                        <label class="block text-sm font-semibold text-slate-700 mb-2">Link Facebook <span class="text-slate-400 font-normal">(Không bắt buộc)</span></label>
+                        <div class="relative group">
+                            <i class="fa-brands fa-facebook absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 transition-all duration-300 group-focus-within:text-[#1877F2] group-focus-within:scale-125 group-focus-within:drop-shadow-md z-10"></i>
+                            <input type="url" id="fbLink" placeholder="https://facebook.com/..." 
+                                class="w-full pl-12 pr-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 text-slate-700 focus:bg-white focus:ring-4 focus:ring-[#1877F2]/10 focus:border-[#1877F2] transition-all duration-300 outline-none placeholder:text-slate-400 font-medium">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Nút Submit -->
+                <div class="mt-10">
+                    <button type="submit" class="w-full py-4 px-6 rounded-xl text-white font-bold text-lg bg-gradient-to-r from-brand-500 to-cyan-500 hover:from-brand-600 hover:to-cyan-600 transform transition-all duration-300 hover:-translate-y-1 hover:shadow-float active:scale-95 flex items-center justify-center gap-3">
+                        <span>Gửi Thông Tin Đăng Ký</span>
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                    <p class="text-center text-xs text-slate-400 mt-4 flex items-center justify-center gap-1">
+                        <i class="fa-solid fa-shield-halved"></i> Thông tin của bạn được bảo mật tuyệt đối
+                    </p>
+                </div>
+            </form>
+        </div>
+    </main>
+
+    <!-- Modal Thông báo thành công (Custom thay vì dùng alert) -->
+    <div id="successModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="modal-content bg-white rounded-3xl p-8 max-w-sm w-full text-center shadow-2xl relative border border-white">
+            <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-5 shadow-inner">
+                <i class="fa-solid fa-check text-4xl text-green-500"></i>
+            </div>
+            <h3 class="text-2xl font-bold text-slate-800 mb-2">Đã điền thành công!</h3>
+            <p class="text-slate-500 mb-8 leading-relaxed">Dữ liệu đã được ghi nhận. Bấm OK để tiếp tục điền form mới.</p>
+            <button type="button" onclick="closeModal()" class="w-full py-3.5 px-4 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                OK
+            </button>
+        </div>
+    </div>
+
+    <!-- Scripts xử lý Logic -->
+    <script>
+        // Logic chuyển Tab (Lớp miễn phí / Chất lượng cao)
+        function switchTab(type, element) {
+            // Cập nhật giá trị input ẩn
+            document.getElementById('classTypeInput').value = type;
+            
+            // Lấy tất cả các nút tab
+            const tabs = document.querySelectorAll('.tab-btn');
+            
+            tabs.forEach(tab => {
+                // Xoá class active cũ
+                tab.className = 'tab-btn flex-1 py-3 px-4 rounded-full text-sm font-semibold text-slate-500 hover:text-slate-700 transition-all duration-300 relative z-10';
+                
+                // Set style cho tab được chọn
+                if (tab === element) {
+                    tab.className = 'tab-btn flex-1 py-3 px-4 rounded-full text-sm font-bold bg-gradient-to-r from-brand-600 to-indigo-600 text-white shadow-md transition-all duration-300 relative z-10';
+                }
+            });
+        }
+
+        // Logic xử lý khi chọn trường "Khác"
+        const schoolRadios = document.querySelectorAll('.school-radio');
+        const otherInputWrapper = document.getElementById('otherSchoolInputWrapper');
+        const otherInput = document.getElementById('otherSchoolName');
+        
+        // --- CẤU HÌNH LINK GOOGLE SHEETS TẠI ĐÂY ---
+        // Thay thế bằng URL Web App của Google Apps Script của bạn
+        const GOOGLE_SHEETS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx4LSP1EYbg77lwZ97h1len4zmmrsZ8_pSl8GvJcC1OhqKf5B8zeojfdW1IycoqVVrD/exec";
+        // ------------------------------------------
+
+        schoolRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.value === 'Khác') {
+                    otherInputWrapper.classList.remove('hidden');
+                    otherInput.setAttribute('required', 'true');
+                    otherInput.focus();
+                } else {
+                    otherInputWrapper.classList.add('hidden');
+                    otherInput.removeAttribute('required');
+                    otherInput.value = ''; // Clear value
+                }
+            });
+        });
+
+        // Xử lý Gửi Form
+        document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+            e.preventDefault(); // Ngăn load lại trang
+            
+            // Lấy nút submit để tạo hiệu ứng loading
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalBtnHtml = submitBtn.innerHTML;
+            
+            // Đổi trạng thái nút thành đang tải
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-xl"></i> <span class="ml-2">Đang xử lý...</span>';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            try {
+                // Lấy dữ liệu Trường
+                let selectedSchool = document.querySelector('input[name="school"]:checked');
+                selectedSchool = selectedSchool ? selectedSchool.value : '';
+                if (selectedSchool === 'Khác') {
+                    selectedSchool = document.getElementById('otherSchoolName').value;
+                }
+
+                // Lấy dữ liệu Môn học (Từ danh sách chọn)
+                let selectedSubject = document.getElementById('subject').value;
+
+                // Cảnh báo nếu chưa chọn môn học
+                if (!selectedSubject) {
+                    alert('Vui lòng chọn môn học!');
+                    return; // Dừng lại không gửi
+                }
+
+                // Sử dụng FormData để gửi qua Google Apps Script dễ dàng hơn
+                const formData = new FormData();
+                formData.append('classType', document.getElementById('classTypeInput').value);
+                formData.append('studentName', document.getElementById('studentName').value);
+                formData.append('school', selectedSchool);
+                formData.append('campus', document.getElementById('campus').value);
+                formData.append('teacher', document.getElementById('teacher').value);
+                formData.append('grade', document.getElementById('grade').value);
+                formData.append('subject', selectedSubject);
+                formData.append('studentPhone', document.getElementById('studentPhone').value);
+                formData.append('parentPhone', document.getElementById('parentPhone').value);
+                formData.append('fbLink', document.getElementById('fbLink').value);
+
+                // Gửi dữ liệu tới Google Sheets nếu đã cấu hình URL
+                if (GOOGLE_SHEETS_WEB_APP_URL && GOOGLE_SHEETS_WEB_APP_URL !== "ĐIỀN_LINK_WEB_APP_CỦA_BẠN_VÀO_ĐÂY") {
+                    await fetch(GOOGLE_SHEETS_WEB_APP_URL, {
+                        method: 'POST',
+                        mode: 'no-cors', // Cần thiết để gửi form tới Google Scripts từ domain khác
+                        body: formData
+                    });
+                } else {
+                    // Nếu chưa có link, giả lập thời gian delay 1 giây để xem hiệu ứng
+                    console.log("Dữ liệu đăng ký (Chưa gửi về GG Sheets do chưa điền link):", Object.fromEntries(formData));
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+                }
+
+                // Hiển thị Custom Modal thành công
+                document.getElementById('successModal').classList.add('active');
+                
+                // Reset form sau khi gửi
+                this.reset();
+                
+                // Reset UI về mặc định
+                switchTab('Lớp Miễn Phí', document.querySelectorAll('.tab-btn')[0]);
+                otherInputWrapper.classList.add('hidden');
+                
+                // Bỏ check tất cả radio sau khi reset
+                document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+
+            } catch (error) {
+                console.error('Lỗi khi gửi form:', error);
+                alert('Có lỗi xảy ra trong quá trình gửi. Vui lòng thử lại sau!');
+            } finally {
+                // Phục hồi lại nút submit
+                submitBtn.innerHTML = originalBtnHtml;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-80', 'cursor-not-allowed');
+            }
+        });
+
+        // Đóng modal
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+        }
+
+        // Hiệu ứng Fade in cho các element mới xuất hiện bằng Tailwind (tuỳ chỉnh qua class)
+        tailwind.config.theme.extend.animation = {
+            'fade-in': 'fadeIn 0.3s ease-out forwards',
+        };
+        tailwind.config.theme.extend.keyframes = {
+            fadeIn: {
+                '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                '100%': { opacity: '1', transform: 'translateY(0)' },
+            }
+        };
+    </script>
+</body>
+</html>
