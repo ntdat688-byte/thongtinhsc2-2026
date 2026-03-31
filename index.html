@@ -386,7 +386,7 @@
     <!-- Nút thả nổi & Panel hiển thị Lịch sử (Đã tối ưu siêu nhỏ gọn, mờ 50%) -->
     <div class="fixed bottom-4 right-4 z-40 flex flex-col items-end">
         <!-- Panel hiển thị -->
-        <div id="recentPanel" class="mb-3 w-56 sm:w-64 bg-slate-300/40 backdrop-blur-md rounded-xl shadow-lg border border-white/60 opacity-60 hover:opacity-100 transition-all duration-300 overflow-hidden flex flex-col transform origin-bottom-right scale-100">
+        <div id="recentPanel" class="mb-3 w-64 sm:w-72 bg-slate-300/40 backdrop-blur-md rounded-xl shadow-lg border border-white/60 opacity-60 hover:opacity-100 transition-all duration-300 overflow-hidden flex flex-col transform origin-bottom-right scale-100">
             <div class="bg-slate-200/80 text-slate-700 px-3 py-2 flex justify-between items-center border-b border-white/40">
                 <h4 class="font-bold text-[11px] flex items-center gap-1.5 uppercase tracking-wide"><i class="fa-solid fa-bolt text-amber-500"></i> Vừa ghi danh</h4>
                 <button type="button" onclick="toggleRecent()" class="text-slate-400 hover:text-slate-600 transition-colors"><i class="fa-solid fa-minus"></i></button>
@@ -487,18 +487,18 @@
                 return timeStr; // Nếu lỗi parse thì hiện nguyên gốc
             };
 
-            // Hàm render HTML cho mỗi bản ghi (Cực kỳ tối ưu diện tích)
+            // Hàm render HTML cho mỗi bản ghi (Đã chỉnh sửa để hiển thị full nội dung rõ ràng)
             const renderHTML = (item, delay) => {
                 const fTime = formatTime(item.time);
                 return `
-                    <div class="bg-white/80 backdrop-blur-sm border border-white shadow-sm rounded-lg p-2 opacity-0 animate-fade-in mb-1" style="animation-delay: ${delay}ms">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-slate-700 text-[11px] truncate"><i class="fa-solid fa-user-check text-green-500 mr-1"></i>${item.name || 'HS mới'}</span>
-                            <span class="text-[9px] text-slate-500 bg-slate-100/80 px-1 py-0.5 rounded flex items-center shrink-0 ml-1"><i class="fa-regular fa-clock mr-1"></i>${fTime}</span>
+                    <div class="bg-white/80 backdrop-blur-sm border border-white shadow-sm rounded-lg p-2.5 opacity-0 animate-fade-in mb-1.5" style="animation-delay: ${delay}ms">
+                        <div class="flex justify-between items-center mb-1.5">
+                            <span class="font-bold text-slate-700 text-[11px] truncate pr-2"><i class="fa-solid fa-user-check text-green-500 mr-1.5"></i>${item.name || 'HS mới'}</span>
+                            <span class="text-[9px] text-slate-500 bg-slate-100/80 px-1.5 py-0.5 rounded flex items-center shrink-0"><i class="fa-regular fa-clock mr-1"></i>${fTime}</span>
                         </div>
-                        <div class="flex gap-1 flex-wrap text-[9px] font-medium">
-                            <span class="bg-blue-50/80 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100/50">Cơ sở: ${item.campus || '...'}</span>
-                            <span class="bg-indigo-50/80 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-100/50">GV: ${item.teacher || '...'}</span>
+                        <div class="flex gap-1.5 flex-wrap text-[10px] font-medium">
+                            <span class="bg-blue-50/80 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100/50">Cơ sở: ${item.campus || 'Chưa cập nhật'}</span>
+                            <span class="bg-indigo-50/80 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-100/50">GV: ${item.teacher || 'Chưa cập nhật'}</span>
                         </div>
                     </div>
                 `;
@@ -542,8 +542,8 @@
                 const d2 = new Date(d1.getTime() - 25 * 60000); // Trừ đi 25 phút
 
                 const mockData = [
-                    { name: "Nguyễn Văn A", time: d1.toString(), campus: "Dĩ An", teacher: "Thành Đạt" },
-                    { name: "Trần Thị B", time: d2.toString(), campus: "Bình An", teacher: "Cô Lan" }
+                    { name: "Bùi Nguyễn Ngọc Ánh", time: d1.toString(), campus: "Đông Hòa", teacher: "Thành" },
+                    { name: "Trần Thị B", time: d2.toString(), campus: "Nguyễn Văn Siêu", teacher: "Cô Lan" }
                 ];
                 
                 mockData.forEach((item, index) => {
