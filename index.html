@@ -487,9 +487,22 @@
                 return timeStr; // Nếu lỗi parse thì hiện nguyên gốc
             };
 
-            // Hàm render HTML cho mỗi bản ghi (Đã chỉnh sửa để hiển thị full nội dung rõ ràng)
+            // Hàm render HTML cho mỗi bản ghi
             const renderHTML = (item, delay) => {
                 const fTime = formatTime(item.time);
+                
+                // Tự động kiểm tra: Nếu có Môn học thì hiện Môn, nếu có Cơ sở thì hiện Cơ sở
+                let tagsHTML = '';
+                if (item.campus && item.campus !== 'undefined') {
+                    tagsHTML += `<span class="bg-blue-50/80 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100/50">CS: ${item.campus}</span>`;
+                }
+                if (item.subject && item.subject !== 'undefined') {
+                    tagsHTML += `<span class="bg-emerald-50/80 text-emerald-600 px-1.5 py-0.5 rounded border border-emerald-100/50">${item.subject}</span>`;
+                }
+                if (!item.campus && !item.subject) {
+                    tagsHTML += `<span class="bg-slate-50/80 text-slate-500 px-1.5 py-0.5 rounded border border-slate-200/50">Đang đồng bộ</span>`;
+                }
+
                 return `
                     <div class="bg-white/80 backdrop-blur-sm border border-white shadow-sm rounded-lg p-2.5 opacity-0 animate-fade-in mb-1.5" style="animation-delay: ${delay}ms">
                         <div class="flex justify-between items-center mb-1.5">
@@ -497,8 +510,8 @@
                             <span class="text-[9px] text-slate-500 bg-slate-100/80 px-1.5 py-0.5 rounded flex items-center shrink-0"><i class="fa-regular fa-clock mr-1"></i>${fTime}</span>
                         </div>
                         <div class="flex gap-1.5 flex-wrap text-[10px] font-medium">
-                            <span class="bg-blue-50/80 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100/50">Cơ sở: ${item.campus || 'Chưa cập nhật'}</span>
-                            <span class="bg-indigo-50/80 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-100/50">GV: ${item.teacher || 'Chưa cập nhật'}</span>
+                            ${tagsHTML}
+                            <span class="bg-indigo-50/80 text-indigo-600 px-1.5 py-0.5 rounded border border-indigo-100/50">GV: ${item.teacher || '...'}</span>
                         </div>
                     </div>
                 `;
@@ -542,8 +555,8 @@
                 const d2 = new Date(d1.getTime() - 25 * 60000); // Trừ đi 25 phút
 
                 const mockData = [
-                    { name: "Bùi Nguyễn Ngọc Ánh", time: d1.toString(), campus: "Đông Hòa", teacher: "Thành" },
-                    { name: "Trần Thị B", time: d2.toString(), campus: "Nguyễn Văn Siêu", teacher: "Cô Lan" }
+                    { name: "Bùi Nguyễn Ngọc Ánh", time: d1.toString(), campus: "Đông Hòa", teacher: "Thành", subject: "Toán" },
+                    { name: "Trần Thị B", time: d2.toString(), campus: "Nguyễn Văn Siêu", teacher: "Cô Lan", subject: "Tiếng Anh" }
                 ];
                 
                 mockData.forEach((item, index) => {
